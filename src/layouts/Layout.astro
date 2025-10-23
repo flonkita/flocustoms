@@ -1,4 +1,6 @@
 ---
+import logo from '../assets/logo-removebg-preview.png';
+
 const { title = "Flo Custom" } = Astro.props;
 ---
 
@@ -12,26 +14,8 @@ const { title = "Flo Custom" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    <!-- SVG responsive -->
-    <svg
-      class="background-svg"
-      xmlns="http://www.w3.org/2000/svg"
-      preserveAspectRatio="none"
-    >
-      <defs>
-        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#f7b733;stop-opacity:1"></stop>
-          <stop offset="100%" style="stop-color:#fc4a1a;stop-opacity:1"></stop>
-        </linearGradient>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#grad1)"></rect>
-      <circle cx="85%" cy="15%" r="12%" fill="rgba(255,255,255,0.08)"></circle>
-      <circle cx="20%" cy="80%" r="18%" fill="rgba(255,255,255,0.06)"></circle>
-      <path
-        d="M0,70 Q50,90 100,70 T200,70 T300,70 T400,70 T500,70 T600,70 T700,70 T800,70 T900,70 T1000,70 V100 H0 Z"
-        fill="rgba(255,255,255,0.05)"
-        transform="scale(1.2)"></path>
-    </svg>
+    <!-- Logo en remplacement du SVG responsive -->
+    <img class="background-logo" src={logo.src} alt="Logo" />
 
     <slot />
   </body>
@@ -49,8 +33,8 @@ body {
     background: linear-gradient(180deg, #fbe4ee 0%, #fdeef5 50%, #fffafc 100%);
 
     /* Images superposées */
-    background-image: url("/images/papillons.svg"),
-      url("/images/papillon-gauche.svg"),
+    background-image: url("/src/assets/papillons.svg"),
+      url("/src/assets/papillons-gauche.svg"),
       linear-gradient(180deg, #fbe4ee 0%, #fffafc 100%);
 
     background-repeat: no-repeat, no-repeat, no-repeat;
@@ -62,13 +46,24 @@ body {
       /* papillon bas gauche */ center; /* dégradé */
 
     background-size:
-      20vw,
-      /* papillon haut droit */ 15vw,
+      22vw,
+      /* papillon haut droit */ 18vw,
       /* papillon bas gauche */ cover; /* dégradé */
 
     /* Effet lumineux */
     box-shadow: inset 0 0 6vw rgba(255, 192, 203, 0.3);
     overflow-x: hidden;
+  }
+
+  /* Logo sizing and placement */
+  .background-logo {
+    width: 180px;
+    max-width: 28%;
+    height: auto;
+    display: block;
+    margin: 12px auto 18px;
+    position: relative;
+    z-index: 2;
   }
 
   @media (max-width: 768px) {
@@ -77,7 +72,13 @@ body {
         85% 8%,
         5% 92%,
         center;
-      background-size: 35vw, 25vw, cover;
+      background-size: 40vw, 30vw, cover;
+    }
+
+    .background-logo {
+      width: 120px;
+      max-width: 40%;
     }
   }
 </style>
+
