@@ -1,0 +1,170 @@
+---
+---
+
+<div class="assistant" id="assistant-chatbot">
+  <div class="chat">
+    <p class="question" id="chatbot-question">Salut 👋 ! Que veux-tu personnaliser aujourd’hui ? (Crocs, Coque de téléphone…)</p>
+    <input
+      id="chatbot-input"
+      type="text"
+      placeholder="Écris ta réponse ici..."
+      aria-label="Réponse"
+    />
+    <button id="chatbot-next">Suivant</button>
+    <div id="chatbot-summary" class="summary" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+  // @ts-nocheck
+
+  (function () {
+    const questions = [
+      "Salut 👋 ! Que veux-tu personnaliser aujourd’hui ? (Crocs, Coque de téléphone…)",
+      "Super ! Quelle couleur ou thème veux-tu ? 🎨",
+      "Souhaites-tu ajouter un texte ou un nom ? ✍️",
+      "As-tu un compte Instagram ou un contact (pseudo/email/téléphone) pour qu'on puisse te prévenir ? 📲",
+      "Parfait 😍 Veux-tu nous envoyer une image de référence plus tard par mail ?",
+    ];
+
+  let step = 0;
+  /** @type {{[k:string]: string}} */
+  const answers = {};
+
+  /** @type {HTMLElement | null} */
+  const qEl = document.getElementById('chatbot-question');
+  /** @type {HTMLInputElement | null} */
+  const inputEl = /** @type {HTMLInputElement | null} */ (document.getElementById('chatbot-input'));
+  /** @type {HTMLButtonElement | null} */
+  const btn = /** @type {HTMLButtonElement | null} */ (document.getElementById('chatbot-next'));
+
+  // Safety guard — si les éléments ne sont pas disponibles (rare), on stoppe
+  if (!qEl || !inputEl || !btn) return;
+
+  /** @type {HTMLElement} */
+  const q = /** @type {HTMLElement} */ (qEl);
+  /** @type {HTMLInputElement} */
+  const input = /** @type {HTMLInputElement} */ (inputEl);
+  /** @type {HTMLButtonElement} */
+  const button = /** @type {HTMLButtonElement} */ (btn);
+
+    function render() {
+      q.textContent = questions[step];
+      input.value = '';
+      input.focus();
+    }
+
+    function handleNext() {
+      const value = input.value.trim();
+      if (value === '') return;
+      answers[String(step)] = value;
+      if (step < questions.length - 1) {
+        step += 1;
+        render();
+      } else {
+        // Dernière étape — on envoie les réponses au serveur
+  /** @type {{[k:string]:string}} */
+  const answersCopy = { ...answers };
+  const payload = { answers: answersCopy };
+        // Afficher un message de confirmation local
+        const summaryEl = document.getElementById('chatbot-summary');
+        if (summaryEl) {
+          summaryEl.style.display = 'block';
+          const entries = Object.entries(payload.answers);
+          summaryEl.innerHTML = '<strong>Récapitulatif :</strong><br/>' + entries.map(([k,v], i) => `<div><strong>${i+1}.</strong> ${String(v)}</div>`).join('');
+        }
+
+        // Envoi au endpoint serveur qui peut rediriger vers un webhook Instagram (configurable)
+        fetch('/api/chatbot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+          .then((res) => res.json().catch(() => ({})))
+          .then((data) => {
+            console.log('Envoi chatbot — réponse serveur :', data);
+            if (summaryEl) {
+              const status = data && data.forwarded ? 'Envoyé au webhook.' : (data && data.message) || 'Enregistré localement.';
+              summaryEl.innerHTML += `<div style="margin-top:.6rem;color:#2b8a3e;font-weight:600">${status}</div>`;
+            }
+          })
+          .catch((err) => {
+            console.error('Erreur envoi chatbot :', err);
+            if (summaryEl) summaryEl.innerHTML += `<div style="margin-top:.6rem;color:#b33;">Erreur d'envoi (voir console)</div>`;
+          })
+          .finally(() => {
+            // reset form for new run
+            step = 0;
+            // @ts-ignore - clear typed copy
+            for (const k in answersCopy) delete answersCopy[k];
+            render();
+          });
+      }
+    }
+
+    button.addEventListener('click', handleNext);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleNext();
+    });
+
+    // initial render
+    render();
+  })();
+</script>
+
+<style>
+  .assistant {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .chat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .question {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 0.8rem 1rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    color: #333;
+    font-weight: 500;
+    text-align: left;
+  }
+
+  #chatbot-input {
+    padding: 0.7rem;
+    border-radius: 0.8rem;
+    border: 1px solid #ccc;
+    outline: none;
+    font-size: 1rem;
+  }
+
+  #chatbot-next {
+    background: #ff6699;
+    border: none;
+    color: white;
+    padding: 0.7rem 1.4rem;
+    border-radius: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+    align-self: flex-start;
+  }
+
+  #chatbot-next:hover {
+    background: #ff4d88;
+  }
+
+  @media (max-width: 480px) {
+    .chat {
+      max-width: 100%;
+    }
+  }
+</style>
