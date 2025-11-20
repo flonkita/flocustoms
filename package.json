@@ -6,9 +6,15 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "add": "astro add"
   },
   "dependencies": {
-    "astro": "^5.15.1"
+    "@astrojs/react": "^4.4.2",
+    "@types/react": "^19.2.6",
+    "@types/react-dom": "^19.2.3",
+    "astro": "^5.15.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   }
 }

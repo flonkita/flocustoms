@@ -10,22 +10,26 @@ import Layout from "../layouts/Layout.astro";
     <Chatbot />
   </div>
 </Layout>
-
 <style>
   .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
-    backdrop-filter: blur(8px);
-    background: rgba(255, 255, 255, 0.35);
-    padding: 3%;
-    border-radius: 2rem;
-    width: 90%;
-    max-width: 500px;
-    margin: 10vh auto;
-    color: #333;
   }
 
   h1 {
-    color: #ff6699;
-    font-weight: 600;
+    font-size: 2.5rem;
+    color: #ff69b4;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 20px;
   }
 </style>
