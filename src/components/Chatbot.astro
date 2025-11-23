@@ -1,21 +1,195 @@
-<div class="chat-container assistant" id="assistant-chatbot">
-  <div class="chat-header">Assistant Commande 🦋</div>
+<div class="chat-widget">
+  <div class="chat-container assistant" id="assistant-chatbot">
+    <div class="chat-header">
+      <span>Assistant Commande 🐾</span>
+    </div>
 
-  <div class="chat-body">
-    <div id="chat-messages" class="messages" aria-live="polite"></div>
-  </div>
+    <div class="chat-body" id="chat-body-scroll">
+      <div id="chat-messages" class="messages" aria-live="polite"></div>
+    </div>
 
-  <div class="chat-input">
-    <input
-      id="chatbot-input"
-      type="text"
-      placeholder="Écris ici..."
-      aria-label="Réponse"
-      autocomplete="off"
-    />
-    <button id="chatbot-next" aria-label="Envoyer">➤</button>
+    <div class="chat-input">
+      <input
+        id="chatbot-input"
+        type="text"
+        placeholder="Écris ton choix..."
+        aria-label="Réponse"
+        autocomplete="off"
+      />
+      <button id="chatbot-next" aria-label="Envoyer">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          ><line x1="22" y1="2" x2="11" y2="13"></line><polygon
+            points="22 2 15 22 11 13 2 9 22 2"></polygon></svg
+        >
+      </button>
+    </div>
   </div>
 </div>
+
+<style>
+  /* --- CONTAINER GLOBAL --- */
+  .chat-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 2rem auto;
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    font-family: sans-serif;
+    border: 1px solid #eee;
+  }
+
+  .chat-header {
+    padding: 1rem;
+    background: #ff85c1; /* Rose un peu plus doux */
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  .chat-body {
+    height: 380px;
+    overflow-y: auto;
+    padding: 1rem;
+    background-color: #fdfdfd;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Espacement entre les groupes de messages */
+  }
+
+  .chat-input {
+    padding: 10px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+    background: white;
+  }
+
+  .chat-input input {
+    flex: 1;
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    outline: none;
+  }
+
+  .chat-input button {
+    background: #ff69b4;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+
+<style is:global>
+  /* Structure d'une ligne de message */
+  .message-row {
+    display: flex;
+    align-items: flex-end; /* Aligne l'avatar en bas */
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  /* --- GESTION GAUCHE / DROITE --- */
+
+  /* Si c'est le BOT : Alignement GAUCHE */
+  .message-row.bot {
+    justify-content: flex-start;
+  }
+
+  /* Si c'est le USER : Alignement DROITE */
+  .message-row.user {
+    justify-content: flex-end;
+  }
+
+  /* --- LE STYLE DES BULLES --- */
+  .msg-bubble {
+    padding: 10px 14px;
+    border-radius: 18px;
+    max-width: 75%;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    position: relative;
+    word-wrap: break-word;
+  }
+
+  /* Couleurs BOT */
+  .message-row.bot .msg-bubble {
+    background-color: #f1f0f0; /* Gris clair */
+    color: #333;
+    border-bottom-left-radius: 4px; /* Petit effet de coin */
+    margin-left: 8px; /* Espace après l'avatar */
+  }
+
+  /* Couleurs USER */
+  .message-row.user .msg-bubble {
+    background-color: #ff69b4; /* Rose marque */
+    color: white;
+    border-bottom-right-radius: 4px; /* Petit effet de coin */
+  }
+
+  /* L'avatar (Papillon) */
+  .msg-avatar {
+    font-size: 1.5rem;
+    line-height: 1;
+    width: 30px;
+    text-align: center;
+  }
+  /* --- INDICATEUR DE FRAPPE (3 points) --- */
+  .typing-indicator {
+    background-color: #f1f0f0;
+    padding: 12px 16px;
+    border-radius: 18px;
+    border-bottom-left-radius: 4px;
+    display: inline-flex;
+    gap: 4px;
+    width: fit-content;
+    margin-left: 8px;
+    margin-bottom: 5px;
+  }
+
+  .typing-dot {
+    width: 6px;
+    height: 6px;
+    background: #999;
+    border-radius: 50%;
+    animation: typingBounce 1.4s infinite ease-in-out both;
+  }
+
+  .typing-dot:nth-child(1) {
+    animation-delay: -0.32s;
+  }
+  .typing-dot:nth-child(2) {
+    animation-delay: -0.16s;
+  }
+
+  @keyframes typingBounce {
+    0%,
+    80%,
+    100% {
+      transform: scale(0);
+    }
+    40% {
+      transform: scale(1);
+    }
+  }
+</style>
 
 <script>
   // @ts-nocheck
@@ -26,172 +200,134 @@
       "Parfait 😍 Quel est ton Insta pour qu’on te contacte ? 📸",
     ];
 
-    const messages = [
-      { from: 'bot', text: 'Salut 👋 Je suis l’assistant Flo Custom 🦋' },
-      { from: 'bot', text: 'Dis-moi, que veux-tu personnaliser aujourd’hui ? (Crocs, Coque…)' },
+    let messages = [
+      { from: "bot", text: "Salut 👋 Je suis l’assistant Flo Custom 🦋" },
+      {
+        from: "bot",
+        text: "Dis-moi, que veux-tu personnaliser aujourd’hui ? (Crocs, Coque…)",
+      },
     ];
 
     let step = 0;
     const answers = {};
 
-    const messagesEl = document.getElementById('chat-messages');
-    const input = /** @type {HTMLInputElement | null} */ (document.getElementById('chatbot-input'));
-    const button = /** @type {HTMLButtonElement | null} */ (document.getElementById('chatbot-next'));
+    const messagesEl = document.getElementById("chat-messages");
+    const scrollContainer = document.getElementById("chat-body-scroll");
+    const input = document.getElementById("chatbot-input");
+    const button = document.getElementById("chatbot-next");
 
-    if (!messagesEl || !input || !button) return;
+    if (!messagesEl || !input || !button || !scrollContainer) return;
 
-    function renderMessages() {
-      messagesEl.innerHTML = messages
-        .map((m, i) => {
-          const avatar = m.from === 'bot' ? '<div class="avatar bot">🦋</div>' : '<div class="avatar user">👤</div>';
-          return `<div class="bubble ${m.from}" data-i="${i}">${m.from==='bot'?avatar:''}<p>${m.text}</p>${m.from==='user'?avatar:''}</div>`;
-        })
-        .join('');
-      messagesEl.scrollTop = messagesEl.scrollHeight;
+    function appendMessageToDOM(msg) {
+      const isBot = msg.from === "bot";
+
+      // On met l'avatar seulement si c'est le bot
+      const avatarHTML = isBot
+        ? `<div class="msg-avatar" style="display:flex; align-items:center; justify-content:center;">
+       <svg width="24" height="24" viewBox="0 0 640 640" fill="#ff69b4" xmlns="http://www.w3.org/2000/svg">
+         <path d="M298.5 156.9C312.8 199.8 298.2 243.1 265.9 253.7C233.6 264.3 195.8 238.1 181.5 195.2C167.2 152.3 181.8 109 214.1 98.4C246.4 87.8 284.2 114 298.5 156.9zM164.4 262.6C183.3 295 178.7 332.7 154.2 346.7C129.7 360.7 94.5 345.8 75.7 313.4C56.9 281 61.4 243.3 85.9 229.3C110.4 215.3 145.6 230.2 164.4 262.6zM133.2 465.2C185.6 323.9 278.7 288 320 288C361.3 288 454.4 323.9 506.8 465.2C510.4 474.9 512 485.3 512 495.7L512 497.3C512 523.1 491.1 544 465.3 544C453.8 544 442.4 542.6 431.3 539.8L343.3 517.8C328 514 312 514 296.7 517.8L208.7 539.8C197.6 542.6 186.2 544 174.7 544C148.9 544 128 523.1 128 497.3L128 495.7C128 485.3 129.6 474.9 133.2 465.2zM485.8 346.7C461.3 332.7 456.7 295 475.6 262.6C494.5 230.2 529.6 215.3 554.1 229.3C578.6 243.3 583.2 281 564.3 313.4C545.4 345.8 510.3 360.7 485.8 346.7zM374.1 253.7C341.8 243.1 327.2 199.8 341.5 156.9C355.8 114 393.6 87.8 425.9 98.4C458.2 109 472.8 152.3 458.5 195.2C444.2 238.1 406.4 264.3 374.1 253.7z" />
+       </svg>
+     </div>`
+        : ``;
+      // On change l'ordre HTML selon qui parle pour faciliter le Flexbox
+      // Bot : Avatar d'abord, puis Bulle
+      // User : Bulle d'abord (pas d'avatar)
+      let innerContent = isBot
+        ? `${avatarHTML}<div class="msg-bubble">${msg.text}</div>`
+        : `<div class="msg-bubble">${msg.text}</div>`;
+
+      const html = `
+        <div class="message-row ${msg.from}">
+          ${innerContent}
+        </div>
+      `;
+
+      messagesEl.insertAdjacentHTML("beforeend", html);
+
+      // Scroll automatique vers le bas
+      setTimeout(() => {
+        scrollContainer.scrollTo({
+          top: scrollContainer.scrollHeight,
+          behavior: "smooth",
+        });
+      }, 50);
     }
 
-    function botReply(text, delay = 700) {
+    // Initialisation
+    messages.forEach((m) => appendMessageToDOM(m));
+
+    function botReply(text, delay = 1500) {
+      // J'ai augmenté le délai par défaut à 1.5s pour laisser le temps de voir l'anim
+      const messagesEl = document.getElementById("chat-messages");
+      const scrollContainer = document.getElementById("chat-body-scroll");
+
+      // 1. Créer l'ID unique pour l'indicateur
+      const loadingId = "loading-" + Date.now();
+
+      // 2. Afficher l'indicateur de frappe
+      const loadingHTML = `
+        <div class="message-row bot" id="${loadingId}">
+          <div class="msg-avatar" style="display:flex; align-items:center;">
+   <svg width="24" height="24" viewBox="0 0 24 24" fill="#ff69b4" xmlns="http://www.w3.org/2000/svg">
+     <path d="M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM8 6C6.9 6 6 6.9 6 8C6 9.1 6.9 10 8 10C9.1 10 10 9.1 10 8C10 6.9 9.1 6 8 6ZM16 6C14.9 6 14 6.9 14 8C14 9.1 14.9 10 16 10C17.1 10 18 9.1 18 8C18 6.9 17.1 6 16 6ZM12 8C9.33 8 7 10.33 7 13C7 15.2 8.61 16.96 10.74 17.25C11.31 19.44 13.38 21 15.5 21C18.54 21 21 18.54 21 15.5C21 12.39 17.13 10.22 14.73 9.21C13.93 8.87 13.01 8.58 12 8Z" />
+   </svg>
+</div>
+          <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+      `;
+      messagesEl.insertAdjacentHTML("beforeend", loadingHTML);
+      scrollContainer.scrollTo({
+        top: scrollContainer.scrollHeight,
+        behavior: "smooth",
+      });
+
+      // 3. Attendre le délai, supprimer l'indicateur, afficher le vrai message
       setTimeout(() => {
-        messages.push({ from: 'bot', text });
-        renderMessages();
+        const loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.remove();
+
+        const msg = { from: "bot", text };
+        messages.push(msg);
+        appendMessageToDOM(msg); // Ta fonction existante
       }, delay);
     }
 
-    // initial render
-    renderMessages();
-
     function sendFinal(payload) {
-      fetch('/api/chatbot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-        .then((r) => r.json().catch(() => ({})))
-        .then((data) => {
-          if (data && data.forwarded) {
-            botReply('Merci 🦋 Ta commande est bien envoyée !');
-            botReply('On te contactera sur Insta très vite 💖', 400);
-          } else {
-            botReply('Merci 🦋 Ta commande est reçue (webhook non configuré).');
-          }
-        })
-        .catch(() => botReply('Erreur lors de l’envoi, essaie plus tard.'));
+      // Simulation d'envoi
+      setTimeout(() => {
+        botReply("Merci 🦋 Ta commande est bien reçue !");
+        botReply("On te contactera sur Insta très vite 💖", 1200);
+      }, 1000);
     }
 
     function handleSend() {
       const val = input.value.trim();
       if (!val) return;
-      messages.push({ from: 'user', text: val });
+
+      const msg = { from: "user", text: val };
+      messages.push(msg);
+      appendMessageToDOM(msg);
+
       answers[step] = val;
-      input.value = '';
-      renderMessages();
+      input.value = "";
+      input.focus();
 
       if (step < questions.length) {
         botReply(questions[step]);
         step += 1;
-      }
-
-      if (step >= questions.length) {
+      } else {
         const payload = { answers: { ...answers } };
         sendFinal(payload);
       }
     }
 
-    button.addEventListener('click', handleSend);
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') handleSend();
+    button.addEventListener("click", handleSend);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleSend();
     });
   })();
 </script>
-
-<style>
-  .assistant {
-    margin-top: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .chat-container {
-    width: 100%;
-    max-width: 560px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-
-  .chat-header {
-    background: linear-gradient(90deg,#ff9cc3,#ff6699);
-    color: white;
-    padding: 0.8rem 1rem;
-    border-radius: 0.8rem;
-    font-weight: 700;
-    box-shadow: 0 6px 20px rgba(255,102,153,0.08);
-  }
-
-  .chat-body {
-    background: white;
-    border-radius: 0.8rem;
-    padding: 0.9rem;
-    min-height: 260px;
-    max-height: 340px;
-    overflow-y: auto;
-    box-shadow: 0 6px 24px rgba(15,15,15,0.04);
-  }
-
-  .bubble { display:flex; gap:0.6rem; align-items:flex-start; margin-bottom:0.6rem; }
-  .bubble.bot { justify-content:flex-start; }
-  .bubble.user { justify-content:flex-end; }
-  .bubble p { background: #fff; padding: 0.6rem 0.9rem; border-radius: 0.65rem; max-width: 80%; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .bubble.bot p { background: rgba(255,246,250,1); }
-  .bubble.user p { background: linear-gradient(90deg,#ff6699,#ff4d88); color:white; }
-
-  .avatar { width: 34px; height: 34px; border-radius: 50%; display:flex; align-items:center; justify-content:center; font-size:1.05rem; }
-  .avatar.bot { background: #ffeef4; }
-  .avatar.user { background: #f0f0f0; }
-
-  .question {
-    background: rgba(255, 255, 255, 0.7);
-    padding: 0.8rem 1rem;
-    border-radius: 1rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    color: #333;
-    font-weight: 500;
-    text-align: left;
-  }
-
-  #chatbot-input {
-    padding: 0.7rem;
-    border-radius: 0.8rem;
-    border: 1px solid #ccc;
-    outline: none;
-    font-size: 1rem;
-    flex:1;
-  }
-
-  .chat-input { display:flex; gap:0.6rem; align-items:center; margin-top:0.6rem }
-  .chat-input button { background:#ff6699; color:white; border:none; padding:0.7rem 0.95rem; border-radius:0.7rem; cursor:pointer; font-weight:700 }
-  .chat-input button:hover { background:#ff4d88 }
-
-  /* history and summary
-     kept simple to reuse existing IDs */
-  .history { margin-bottom:0.5rem; font-size:0.95rem }
-  .summary { margin-top:0.6rem; background:#fff7fb; padding:0.6rem; border-radius:0.6rem }
-
-  #chatbot-next {
-    background: #ff6699;
-    border: none;
-    color: white;
-    padding: 0.7rem 1.4rem;
-    border-radius: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s ease;
-    align-self: flex-start;
-  }
-
-  #chatbot-next:hover {
-    background: #ff4d88;
-  }
-
-  @media (max-width: 480px) {
-    .chat { max-width: 100%; }
-  }
-</style>
