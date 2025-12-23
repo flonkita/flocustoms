@@ -1,0 +1,180 @@
+---
+const creations = [
+  {
+    type: "video", // <-- On précise le type ici
+    src: "https://cdn.coverr.co/videos/coverr-putting-stickers-on-a-laptop-4552/1080p.mp4", // Exemple vidéo
+    title: "Custom MacBook 💻",
+    price: "Sur devis",
+    tag: "Vidéo",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1606813907291-d86efc84f44e?q=80&w=600",
+    title: "Crocs Mermaid 🧜‍♀️",
+    price: "env. 60€",
+    tag: "Best-seller",
+  },
+  {
+    type: "video",
+    src: "https://cdn.coverr.co/videos/coverr-artist-painting-on-canvas-5596/1080p.mp4",
+    title: "Processus Créatif 🎨",
+    price: "", // Pas de prix, juste pour le show
+    tag: "Coulisses",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1601593346740-925612772716?q=80&w=600",
+    title: "Coque Pinky 🌸",
+    price: "15€",
+    tag: "Nouveauté",
+  },
+];
+---
+
+<div class="gallery-grid">
+  {
+    creations.map((item) => (
+      <div class="card">
+        <div class="media-box">
+          {item.type === "video" ? (
+            <video
+              src={item.src}
+              autoplay
+              muted
+              loop
+              playsinline
+              class="media-content"
+            />
+          ) : (
+            /* SINON : C'est une image */
+            <img
+              src={item.src}
+              alt={item.title}
+              loading="lazy"
+              class="media-content"
+            />
+          )}
+
+          {item.tag && <span class="tag">{item.tag}</span>}
+        </div>
+
+        <div class="content">
+          <div class="info">
+            <h3>{item.title}</h3>
+            {item.price && <span class="price">{item.price}</span>}
+          </div>
+
+          <a href="/#assistant-chatbot" class="btn-shop">
+            Je veux ça 🐾
+          </a>
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 1rem 0;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+    border: 1px solid #f8f8f8;
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(255, 105, 180, 0.2);
+  }
+
+  /* MEDIA (Image ou Vidéo) */
+  .media-box {
+    height: 320px; /* Un peu plus haut pour bien voir les vidéos verticales */
+    overflow: hidden;
+    position: relative;
+    background: #f0f0f0;
+  }
+
+  /* Cette classe s'applique aux IMG et aux VIDEO */
+  .media-content {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Important : remplit la case sans déformer */
+    transition: transform 0.5s ease;
+    display: block;
+  }
+
+  .card:hover .media-content {
+    transform: scale(1.05);
+  }
+
+  .tag {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #ff69b4;
+    z-index: 2;
+  }
+
+  /* TEXTE */
+  .content {
+    padding: 1.5rem;
+  }
+
+  .info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .info h3 {
+    font-size: 1.1rem;
+    color: #333;
+    margin: 0;
+  }
+
+  .price {
+    font-weight: 700;
+    color: #888;
+    background: #f4f4f4;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+
+  /* BOUTON */
+  .btn-shop {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: #ffe6f2;
+    color: #ff69b4;
+    text-decoration: none;
+    padding: 12px;
+    border-radius: 14px;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+
+  .btn-shop:hover {
+    background: #ff69b4;
+    color: white;
+  }
+</style>
