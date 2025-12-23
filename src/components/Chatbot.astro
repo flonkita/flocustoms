@@ -194,34 +194,42 @@
 <script>
   // @ts-nocheck
   (function () {
-    const questions = [
-      "Super ! Quelle couleur ou thème veux-tu pour ta création ? 🎨",
+    // --- 1. CONFIGURATION DES QUESTIONS SUIVANTES ---
+    // On ne met pas la question 1 ici, car elle est posée au démarrage par le bot
+    const nextQuestions = [
+      "Super ! Quelle couleur ou thème souhaites-tu ? 🎨",
       "Souhaites-tu ajouter un texte, un nom ou une date dessus ? ✍️",
-      "Parfait 😍 Quel est ton Insta pour qu’on te contacte ? 📸",
+      "As-tu un compte Insta ou un contact (mail/tél) pour qu'on te prévienne ? 📲",
+      "Parfait 😍 Veux-tu nous envoyer une image de référence plus tard par mail ?",
     ];
 
+    // Messages de démarrage
     let messages = [
-      { from: "bot", text: "Salut 👋 Je suis l’assistant Flo Custom 🦋" },
+      { from: "bot", text: "Salut 👋 Je suis l’assistant Flo Custom 🐾" },
       {
         from: "bot",
-        text: "Dis-moi, que veux-tu personnaliser aujourd’hui ? (Crocs, Coque…)",
+        text: "Que veux-tu personnaliser aujourd’hui ? (Crocs, Coque, Pochette…)",
       },
     ];
 
     let step = 0;
+    let estimatedPrice = "";
     const answers = {};
 
+    // Sélection des éléments HTML
     const messagesEl = document.getElementById("chat-messages");
     const scrollContainer = document.getElementById("chat-body-scroll");
     const input = document.getElementById("chatbot-input");
     const button = document.getElementById("chatbot-next");
 
+    // Sécurité si le HTML n'est pas chargé
     if (!messagesEl || !input || !button || !scrollContainer) return;
 
+    // --- 2. FONCTION POUR AFFICHER LES MESSAGES (BULLES) ---
     function appendMessageToDOM(msg) {
       const isBot = msg.from === "bot";
 
-      // On met l'avatar seulement si c'est le bot
+      // Avatar Patte de Chat (Rose)
       const avatarHTML = isBot
         ? `<div class="msg-avatar" style="display:flex; align-items:center; justify-content:center;">
        <svg width="24" height="24" viewBox="0 0 640 640" fill="#ff69b4" xmlns="http://www.w3.org/2000/svg">
@@ -229,22 +237,16 @@
        </svg>
      </div>`
         : ``;
-      // On change l'ordre HTML selon qui parle pour faciliter le Flexbox
-      // Bot : Avatar d'abord, puis Bulle
-      // User : Bulle d'abord (pas d'avatar)
+
       let innerContent = isBot
         ? `${avatarHTML}<div class="msg-bubble">${msg.text}</div>`
         : `<div class="msg-bubble">${msg.text}</div>`;
 
-      const html = `
-        <div class="message-row ${msg.from}">
-          ${innerContent}
-        </div>
-      `;
+      const html = `<div class="message-row ${msg.from}">${innerContent}</div>`;
 
       messagesEl.insertAdjacentHTML("beforeend", html);
 
-      // Scroll automatique vers le bas
+      // Scroll automatique en bas
       setTimeout(() => {
         scrollContainer.scrollTo({
           top: scrollContainer.scrollHeight,
@@ -253,75 +255,128 @@
       }, 50);
     }
 
-    // Initialisation
+    // Affichage des premiers messages
     messages.forEach((m) => appendMessageToDOM(m));
 
-    function botReply(text, delay = 1500) {
-      // J'ai augmenté le délai par défaut à 1.5s pour laisser le temps de voir l'anim
-      const messagesEl = document.getElementById("chat-messages");
-      const scrollContainer = document.getElementById("chat-body-scroll");
-
-      // 1. Créer l'ID unique pour l'indicateur
-      const loadingId = "loading-" + Date.now();
-
-      // 2. Afficher l'indicateur de frappe
-      const loadingHTML = `
-        <div class="message-row bot" id="${loadingId}">
-          <div class="msg-avatar" style="display:flex; align-items:center;">
-   <svg width="24" height="24" viewBox="0 0 24 24" fill="#ff69b4" xmlns="http://www.w3.org/2000/svg">
-     <path d="M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM8 6C6.9 6 6 6.9 6 8C6 9.1 6.9 10 8 10C9.1 10 10 9.1 10 8C10 6.9 9.1 6 8 6ZM16 6C14.9 6 14 6.9 14 8C14 9.1 14.9 10 16 10C17.1 10 18 9.1 18 8C18 6.9 17.1 6 16 6ZM12 8C9.33 8 7 10.33 7 13C7 15.2 8.61 16.96 10.74 17.25C11.31 19.44 13.38 21 15.5 21C18.54 21 21 18.54 21 15.5C21 12.39 17.13 10.22 14.73 9.21C13.93 8.87 13.01 8.58 12 8Z" />
-   </svg>
-</div>
-          <div class="typing-indicator">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-          </div>
-        </div>
-      `;
-      messagesEl.insertAdjacentHTML("beforeend", loadingHTML);
-      scrollContainer.scrollTo({
-        top: scrollContainer.scrollHeight,
-        behavior: "smooth",
-      });
-
-      // 3. Attendre le délai, supprimer l'indicateur, afficher le vrai message
+    // Fonction pour faire parler le bot avec un délai (effet naturel)
+    function botReply(text, delay = 800) {
       setTimeout(() => {
-        const loadingEl = document.getElementById(loadingId);
-        if (loadingEl) loadingEl.remove();
-
         const msg = { from: "bot", text };
         messages.push(msg);
-        appendMessageToDOM(msg); // Ta fonction existante
+        appendMessageToDOM(msg);
       }, delay);
     }
 
-    function sendFinal(payload) {
-      // Simulation d'envoi
-      setTimeout(() => {
-        botReply("Merci 🦋 Ta commande est bien reçue !");
-        botReply("On te contactera sur Insta très vite 💖", 1200);
-      }, 1000);
+    // --- 3. LOGIQUE DES PRIX (TON NOTION) ---
+    function detectPrice(userText) {
+      const text = userText.toLowerCase();
+
+      // Règle 1 : Crocs (50-60€)
+      if (text.includes("croc") || text.includes("sabot")) {
+        return "env. 50-60€";
+      }
+      // Règle 2 : Coques et Passeports (15€)
+      else if (
+        text.includes("coque") ||
+        text.includes("pochette") ||
+        text.includes("passeport") ||
+        text.includes("tel")
+      ) {
+        return "15€";
+      }
+      // Produit inconnu
+      else {
+        return null;
+      }
     }
 
+    // --- 4. ENVOI FINAL (FETCH) ---
+    function sendFinal(payload) {
+      // Petit message d'attente
+      botReply("Je note tout ça... 📝", 500);
+
+      fetch("/api/chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+        .then((r) => r.json().catch(() => ({})))
+        .then((data) => {
+          // Succès
+          botReply(
+            `Merci ! Le prix estimé est de <b>${estimatedPrice}</b>. ✨`,
+            1200
+          );
+          botReply(
+            "Ta demande est envoyée ! On revient vers toi très vite sur Insta/Mail pour valider. 💖",
+            2000
+          );
+        })
+        .catch(() => {
+          // Erreur technique
+          botReply(
+            "Oups, je n'arrive pas à envoyer la commande. Peux-tu nous écrire directement sur Insta ? 😓"
+          );
+        });
+    }
+
+    // --- 5. GESTION DU CLIC "ENVOYER" ---
     function handleSend() {
       const val = input.value.trim();
       if (!val) return;
 
+      // Affiche le message de l'utilisateur
       const msg = { from: "user", text: val };
       messages.push(msg);
       appendMessageToDOM(msg);
 
+      // Sauvegarde la réponse
       answers[step] = val;
       input.value = "";
       input.focus();
 
-      if (step < questions.length) {
-        botReply(questions[step]);
-        step += 1;
-      } else {
-        const payload = { answers: { ...answers } };
-        sendFinal(payload);
+      // --- LOGIQUE ÉTAPE PAR ÉTAPE ---
+
+      // ÉTAPE 0 : LE CHOIX DU PRODUIT (C'est là qu'on définit le prix)
+      if (step === 0) {
+        const priceFound = detectPrice(val);
+
+        if (priceFound) {
+          // Si on a reconnu le produit
+          estimatedPrice = priceFound;
+          botReply(
+            `Ça marche ! Pour ce type de création, c'est généralement <b>${estimatedPrice}</b>. On continue ? ✨`
+          );
+
+          // On passe à la question suivante après 1.5s
+          setTimeout(() => {
+            botReply(nextQuestions[0]);
+            step += 1;
+          }, 1500);
+        } else {
+          // Si on n'a pas compris le produit
+          botReply(
+            "Je ne suis pas sûre du tarif pour ça 🤔. C'est pour des Crocs ou une Coque/Pochette ?"
+          );
+          // On reste à step 0 pour qu'il réponde à nouveau
+          return;
+        }
+      }
+      // AUTRES ÉTAPES
+      else if (step > 0) {
+        // Si on a encore des questions dans la liste
+        if (step < nextQuestions.length) {
+          botReply(nextQuestions[step]);
+          step += 1;
+        }
+        // Si c'était la dernière question
+        else {
+          const payload = {
+            answers: { ...answers },
+            estimatedPrice: estimatedPrice, // On ajoute le prix au récap
+          };
+          sendFinal(payload);
+        }
       }
     }
 
