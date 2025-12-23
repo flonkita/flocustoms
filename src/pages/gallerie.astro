@@ -1,12 +1,100 @@
 ---
+// Importation de ton Layout (ajuste le chemin selon ton projet)
 import Layout from "../layouts/Layout.astro";
+// Importation du composant qu'on vient de créer
+import GalleryGrid from "../components/GalleryGrid.astro";
 ---
 
-<Layout title="Gallerie | Flo Custom">
-  <header class="page-header">
-    <h1>Gallerie de Créations ✨</h1>
-    <p>Découvrez quelques-unes de nos créations personnalisées.</p>
-  </header>
+<Layout title="Galerie | Flo Custom">
+  <div class="page-content">
+    <header class="page-header">
+      <h1>Mes Réalisations ✨</h1>
+      <p>Voici quelques exemples de commandes personnalisées.</p>
+    </header>
 
-  <!-- <Gallry /> -->
+    <GalleryGrid />
+
+    <div class="insta-link-section">
+      <p>Tu veux voir plus de vidéos et de coulisses ?</p>
+      <a
+        href="https://instagram.com/ton_pseudo"
+        target="_blank"
+        class="btn-insta"
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          ><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path
+            d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line
+            x1="17.5"
+            y1="6.5"
+            x2="17.51"
+            y2="6.5"></line></svg
+        >
+        Rejoins-nous sur Insta
+      </a>
+    </div>
+  </div>
 </Layout>
+
+<style>
+  .page-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 120px 1.5rem 2rem;
+    font-family: sans-serif;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .page-header h1 {
+    font-size: 2.5rem;
+    color: #ff69b4;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-header p {
+    color: #666;
+    font-size: 1.1rem;
+  }
+
+  /* SECTION INSTA EN BAS */
+  .insta-link-section {
+    margin-top: 4rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #fff0f5 0%, #ffe6f2 100%);
+    border-radius: 20px;
+    text-align: center;
+  }
+
+  .insta-link-section p {
+    color: #555;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+
+  .btn-insta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #e1306c; /* Couleur officielle Instagram */
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: bold;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 15px rgba(225, 48, 108, 0.3);
+  }
+
+  .btn-insta:hover {
+    transform: scale(1.05);
+  }
+</style>
