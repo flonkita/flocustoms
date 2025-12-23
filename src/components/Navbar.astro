@@ -1,0 +1,111 @@
+---
+import logo from "../assets/logo-removebg-preview.png";
+---
+
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="/" class="brand">
+        Flo Custom 
+      <img src={logo.src} alt="Flo Custom Logo" style="height:64px; vertical-align:middle;" />
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="/">Accueil</a></li>
+      <li><a href="/galerie">Réalisations</a></li>
+      <li>
+        <a
+          href="https://instagram.com/_flocustom"
+          target="_blank"
+          class="insta-btn"
+        >
+          Insta 📸
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<style>
+  /* La barre fixe en haut */
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Toujours au-dessus du reste */
+    background: rgba(255, 255, 255, 0.8); /* Blanc transparent */
+    backdrop-filter: blur(12px); /* Effet verre dépoli */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.03);
+  }
+
+  .nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Marque */
+  .brand {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #ff69b4; /* Rose */
+    text-decoration: none;
+    letter-spacing: -0.5px;
+  }
+
+  /* Liens */
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: #555;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover {
+    color: #ff69b4;
+  }
+
+  /* Bouton Insta spécifique */
+  .insta-btn {
+    background: #ff69b4;
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem !important;
+    box-shadow: 0 4px 10px rgba(255, 105, 180, 0.3);
+    transition: transform 0.2s;
+  }
+
+  .insta-btn:hover {
+    transform: scale(1.05);
+    background: #ff1493;
+  }
+
+  /* PETIT RESPONSIVE (Mobile) */
+  @media (max-width: 600px) {
+    .nav-container {
+      flex-direction: column;
+      gap: 10px;
+      padding: 0.8rem;
+    }
+
+    .nav-links {
+      gap: 1rem;
+      font-size: 0.9rem;
+    }
+  }
+</style>
