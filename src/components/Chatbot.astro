@@ -138,7 +138,7 @@
       // Petit message d'attente
       botReply("Je note tout ça... 📝", 500);
 
-      fetch("/pages/api/chatbot", {
+      fetch("/api/chatbot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
